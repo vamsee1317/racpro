@@ -5,6 +5,7 @@ import FeaturedProductsSection from './components/organisms/FeaturedProductsSect
 import ConditionalRenderingDemo from './components/concepts/cr/ConditionalRenderingDemo';
 import StudentList from './components/concepts/listsKeys/ListKeysDemo';
 import EventHandlingDemo from './components/concepts/events/EventHandlingDemo';
+import SignUp from './components/concepts/form/SignUp';
 
 
 
@@ -41,6 +42,7 @@ const App = () => {
       <ConditionalRenderingDemo />
       <StudentList />
       <EventHandlingDemo />
+      <SignUp />
       <Footer year={new Date().getFullYear()} />
     </>
   );
