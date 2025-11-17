@@ -13,6 +13,7 @@
 // import AxiosDemo from './components/concepts/axios/AxiosDemo';
 // import FetchDemo from './components/concepts/axios/FetchDemo';
 
+import AxiosCrud from "./components/concepts/axios/AxiosCrud";
 import TodosPagination from "./components/concepts/axios/TodosPagination";
 
 
@@ -59,6 +60,7 @@ const App = () => {
       <AxiosDemo />
       <Footer year={new Date().getFullYear()} /> */}
       <TodosPagination />
+      <AxiosCrud />
     </>
   );
 };
