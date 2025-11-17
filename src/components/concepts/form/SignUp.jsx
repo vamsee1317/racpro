@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState } from "react";
+import axios from "axios";
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
@@ -8,75 +9,70 @@ export default function SignUp() {
   });
 
   const [formErrors, setFormErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
-//   const handleUserNameChange = (e) => {
-//     const value = e.target.value;
-//     setFormData(prev => ({ ...prev, username: value }));
-//     console.log(value);
-//   };
+  // Handle Input Change
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
 
-//   const handlePasswordChange = (e) => {
-//     const value = e.target.value;
-//     setFormData(prev => ({ ...prev, password: value }));
-//     console.log('password:', value);
-//   };
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
-//   const handleCPasswordChange = (e) => {
-//     const value = e.target.value;
-//     setFormData(prev => ({ ...prev, cpassword: value }));
-//     console.log('confirm password:', value);
-//   };
+  // Validate Function
+  const validateForm = () => {
+    const errors = {};
 
-    const handleInputChange = (e) => {
-        // console.log(e);  
-        const {name, value} = e.target;
-        setFormData((prev)=>({...prev, [name] : value}));
-    };
-
-    console.log(formData);  
-
-    // Validate Function :
-
-    const validateForm = () =>{
-        const errors = {};
-
-        if(!/^[A-Z][a-z]{3,10}$/.test(formData.username)){
-            errors.username = "UserName must start with capital letter and be 3 - 10 characters";
-        }
-
-        if(!/^[#\w@_-]{8,20}$/.test(formData.password)){
-            errors.password = "Password must be 8-20 charcs long";
-        }
-
-        if(formData.cpassword !== formData.password){
-            errors.cpassword = "Passwords do not match";
-        }
-
-        return errors;
-
+    if (!/^[A-Z][a-z]{3,10}$/.test(formData.username)) {
+      errors.username =
+        "UserName must start with a capital letter and be 3-10 characters long";
     }
 
-    // Handle Submit :
-
-    const handleSubmit = () => {
-        const errors = validateForm();
-        setFormErrors(errors);
-
-        if(Object.keys(errors).length === 0){
-            console.log(formData);
-        }else{
-            alert(`please fix the errors`);
-        }
-        console.log(`Form Submitted`);
+    if (!/^[#\\w@_-]{8,20}$/.test(formData.password)) {
+      errors.password = "Password must be 8-20 characters long";
     }
+
+    if (formData.cpassword !== formData.password) {
+      errors.cpassword = "Passwords do not match";
+    }
+
+    return errors;
+  };
+
+  // Handle Form Submit
+  const handleSubmit = () => {
+    const errors = validateForm();
+    setFormErrors(errors);
+
+    if (Object.keys(errors).length === 0) {
+      // No Errors → Call API
+      setLoading(true);
+
+      axios
+        .post("https://dummyjson.com/users/add", formData)
+        .then((res) => {
+          console.log("Signup Successful:", res.data);
+          alert("Signup Successful!");
+        })
+        .catch((err) => {
+          console.log("Error during signup:", err);
+          alert("Signup Failed");
+        })
+        .finally(() => setLoading(false));
+    } else {
+      alert("Please fix the errors");
+    }
+  };
 
   return (
     <div className="max-w-md mx-auto mt-10 p-6 shadow-lg rounded-lg border">
-
-      <h2 className='p-3 bg-indigo-100 rounded-b-lg text-center text-xl font-semibold mb-5'>
+      <h2 className="p-3 bg-indigo-100 rounded-b-lg text-center text-xl font-semibold mb-5">
         SignUp Form
       </h2>
 
+      {/* Username */}
       <div className="mb-3">
         <label className="block mb-1 font-medium">UserName</label>
         <input
@@ -87,11 +83,12 @@ export default function SignUp() {
           value={formData.username}
           onChange={handleInputChange}
         />
-        {
-            formErrors.username && <p className='text-red-500'>{formErrors.username}</p>
-        }
+        {formErrors.username && (
+          <p className="text-red-500">{formErrors.username}</p>
+        )}
       </div>
 
+      {/* Password */}
       <div className="mb-3">
         <label className="block mb-1 font-medium">Password</label>
         <input
@@ -102,9 +99,12 @@ export default function SignUp() {
           value={formData.password}
           onChange={handleInputChange}
         />
-        {formErrors.password && <p className='text-red-500'>{formErrors.password}</p>}
+        {formErrors.password && (
+          <p className="text-red-500">{formErrors.password}</p>
+        )}
       </div>
 
+      {/* Confirm Password */}
       <div className="mb-3">
         <label className="block mb-1 font-medium">Confirm Password</label>
         <input
@@ -115,12 +115,19 @@ export default function SignUp() {
           value={formData.cpassword}
           onChange={handleInputChange}
         />
-        {formErrors.cpassword && <p className='text-red-500'>{formErrors.cpassword}</p>}
+        {formErrors.cpassword && (
+          <p className="text-red-500">{formErrors.cpassword}</p>
+        )}
       </div>
 
-      <button className="bg-indigo-500 w-full text-white px-4 py-2 rounded hover:bg-indigo-600" onClick={handleSubmit} type='submit'>
-        SignUp
+      {/* Button */}
+      <button
+        className="bg-indigo-500 w-full text-white px-4 py-2 rounded hover:bg-indigo-600"
+        onClick={handleSubmit}
+        disabled={loading}
+      >
+        {loading ? "Submitting..." : "SignUp"}
       </button>
     </div>
-  )
+  );
 }
